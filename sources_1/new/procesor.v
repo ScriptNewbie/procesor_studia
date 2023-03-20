@@ -51,7 +51,7 @@ wire REGS_ce;
 
 wire [15:0] instant_value;
 
-wire arg_source;
+wire [1:0] arg_source;
 
 
 
@@ -124,13 +124,13 @@ instruction_decoder instruction_decoder(
         .arg_source(arg_source)
     );
 
-assign PC_in = PC_in_source ? PC_jump_addr : linkreg_out;
+assign PC_in = PC_in_source ? linkreg_out : PC_jump_addr;
 
 //More sources to be added so case no assign
 always @(arg_source)
     case (arg_source)
-        1'b0: arg2 = REGS_output;
-        1'b1: arg2 = instant_value;
+        2'b00: arg2 = REGS_output;
+        2'b01: arg2 = instant_value;
     endcase
     
     

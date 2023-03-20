@@ -31,19 +31,19 @@ always @(*)
         end
         3'b010: begin
             res = arg1 & arg2; //AND
-            CY = 1'bx;
+            CY = 1'b0;
         end
         3'b011: begin
             res = arg1 | arg2; //OR
-            CY = 1'bx;
+            CY = 1'b0;
         end
         3'b100: begin
             res = arg1 ^ arg2; //XOR
-            CY = 1'bx;
+            CY = 1'b0;
         end
         3'b101: begin
             res = ~arg1; //NEGACJA
-            CY = 1'bx;
+            CY = 1'b0;
         end
         3'b110: begin
             res = arg1; //Przepisanie operandu 1
