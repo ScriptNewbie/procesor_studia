@@ -25,8 +25,10 @@ module instruction_decoder(
 		
         output reg PC_source,
         output reg [1:0] arg_source,
-		output reg block_cy_ov
+		output reg block_cy_ov,
         
+        output reg mem_we,
+        output [9:0] mem_addr
   
     );
 	
@@ -95,6 +97,30 @@ begin
             else  output_type <= 3'b111;
         end
         
+        5'b10001: begin
+            output_type <= 3'b011;
+        end
+        
+        5'b11101: begin
+            output_type <= 3'b100;
+        end
+        
+        5'b11110: begin
+            output_type <= 3'b100;
+        end
+        
+        5'b11100: begin
+            output_type <= 3'b100;
+        end
+        
+        5'b11001: begin
+            output_type <= 3'b101;
+        end
+        
+        5'b11010: begin
+            output_type <= 3'b101;
+        end
+        
         default: begin 
            output_type <= 3'b111;
         end
@@ -103,6 +129,7 @@ end
 
 always @(*)
 begin
+//Operacje arytmetyczno logiczne
     case (output_type)
 		3'b000: begin 
 			A_ce <= 1'b1;
@@ -117,7 +144,9 @@ begin
 			PC_source <= 1'b0;
 			arg_source <= 2'b00;
 			block_cy_ov <= 1'b0;
+			mem_we <= 1'b0;
 		end
+		//INC/DEC
 		3'b001: begin 
 		    A_ce <= 1'b1;
             REGS_ce <= 1'b0;
@@ -131,7 +160,9 @@ begin
             PC_source <= 1'b0;
             arg_source <= 2'b01;
             block_cy_ov <= 1'b1;
+            mem_we <= 1'b0;
         end
+        //Skoki
         3'b010: begin 
 		    A_ce <= 1'b0;
             REGS_ce <= 1'b0;
@@ -145,6 +176,55 @@ begin
             PC_source <= 1'b0;
             arg_source <= 2'b01;
             block_cy_ov <= 1'b1;
+            mem_we <= 1'b0;
+        end
+        3'b011: begin 
+		    A_ce <= 1'b0;
+            REGS_ce <= 1'b0;
+            flags_ce <= 1'b0;
+                    
+            load_pc <= 1'b1;
+            load_linkreg <= 1'b0;
+                    
+            instant <= 'b1;
+                    
+            PC_source <= 1'b1;
+            arg_source <= 2'b01;
+            block_cy_ov <= 1'b1;
+            mem_we <= 1'b0;
+        end
+        3'b100: begin 
+		    A_ce <= 1'b1;
+            REGS_ce <= 1'b0;
+            flags_ce <= 1'b0;
+                    
+            load_pc <= 1'b0;
+            load_linkreg <= 1'b0;
+                    
+            instant <= INS[15:0];
+                    
+            PC_source <= 1'b1;
+            arg_source <= operation[1:0];
+            block_cy_ov <= 1'b1;
+            mem_we <= 1'b0;
+        end
+        3'b101: begin 
+		    A_ce <= 1'b0;
+		    
+            REGS_ce <= operation[0];
+            mem_we <= operation[1];
+            
+            flags_ce <= 1'b0;
+                 
+            load_pc <= 1'b0;
+            load_linkreg <= 1'b0;
+                    
+            instant <= 'b1;
+                    
+            PC_source <= 1'b1;
+            arg_source <= 2'b01;
+            block_cy_ov <= 1'b1;
+            
         end
         default: begin 
 		    A_ce <= 1'b0;
@@ -154,11 +234,12 @@ begin
 			load_pc <= 1'b0;
 			load_linkreg <= 1'b0;
 				
-			instant <= 'b0;
+			instant <= 'b1;
 				
 			PC_source <= 1'b0;
 			arg_source <= 'b0;
 			block_cy_ov <= 1'b0;
+			mem_we <= 1'b0;
 		end
     endcase
 end
@@ -167,5 +248,6 @@ assign opcode = INS[20:18];
 assign new_pc = INS[15:0];
 assign new_linkreg = INS_addr + 1; 
 assign REGS_addr = INS[4:0];
+assign mem_addr = INS[9:0];
 
 endmodule

@@ -40,11 +40,12 @@ reg [15:0] arg2;
 wire [15:0] alu_res;
 wire [4:0] flag_in;
 wire [4:0] flag_out;
+wire flagreg_ce;
 
 wire A_ce;
 wire [15:0] A_out;
 
-wire [15:0] REGS_input;
+
 wire [15:0] REGS_output;
 wire [4:0] REGS_addr;
 wire REGS_ce;
@@ -52,6 +53,10 @@ wire REGS_ce;
 wire [15:0] instant_value;
 
 wire [1:0] arg_source;
+
+wire [15:0] mem_we;
+wire [9:0] mem_addr;
+wire [15:0] mem_out;
 
 
 
@@ -70,7 +75,9 @@ ROM PM(
 
 register #(.WIDTH(5)) flag_reg (
     .data_in(flag_out),
-    .data_out(flag_in)
+    .data_out(flag_in),
+    .CE(flagreg_ce),
+    .CLK(clk)
 );    
 
 alu alu(
@@ -100,7 +107,7 @@ registers REGS(
     .CLK(clk),
     .CE(REGS_ce),
     .addr(REGS_addr),
-    .data_in(REGS_input),
+    .data_in(A_out),
     .data_out(REGS_output)
 );
 
@@ -121,7 +128,19 @@ instruction_decoder instruction_decoder(
         .new_pc(PC_jump_addr),
         .new_linkreg(linkreg_in),
         .PC_source(PC_in_source),
-        .arg_source(arg_source)
+        .arg_source(arg_source),
+        .flags_ce(flagreg_ce),
+        .flags(flag_out),
+        .mem_we(mem_we),
+        .mem_addr(mem_addr)
+    );
+    
+data_memory memory(
+       .CLK(clk),
+       .WE(mem_we),
+       .address(mem_addr),
+       .data_in(A_out),
+       .data_out(mem_out)
     );
 
 assign PC_in = PC_in_source ? linkreg_out : PC_jump_addr;
@@ -131,6 +150,8 @@ always @(arg_source)
     case (arg_source)
         2'b00: arg2 = REGS_output;
         2'b01: arg2 = instant_value;
+        2'b10: arg2 = mem_out;
+        default: arg2 = 'bx;
     endcase
     
     
