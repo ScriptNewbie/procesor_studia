@@ -58,7 +58,7 @@ wire [15:0] mem_we;
 wire [9:0] mem_addr;
 wire [15:0] mem_out;
 
-
+wire block_cy_ov;
 
 program_counter PC(
         .IN(PC_in),
@@ -86,7 +86,8 @@ alu alu(
         .arg2(arg2),
         .res(alu_res),
         .in_flg(flag_in),
-        .out_flg(flag_out)
+        .out_flg(flag_out),
+        .block_cy_ov(block_cy_ov)
     );
 
 register A(
@@ -132,7 +133,8 @@ instruction_decoder instruction_decoder(
         .flags_ce(flagreg_ce),
         .flags(flag_out),
         .mem_we(mem_we),
-        .mem_addr(mem_addr)
+        .mem_addr(mem_addr),
+        .block_cy_ov(block_cy_ov)
     );
     
 data_memory memory(

@@ -21,7 +21,7 @@ module instruction_decoder(
         
         output [4:0] REGS_addr,
         output [3:0] opcode,
-        output reg [15:0] instant,
+        output [15:0] instant,
 		
         output reg PC_source,
         output reg [1:0] arg_source,
@@ -139,7 +139,7 @@ begin
 			load_pc <= 1'b0;
 			load_linkreg <= 1'b0;
 				
-			instant <= 'b1;
+			
 				
 			PC_source <= 1'b0;
 			arg_source <= 2'b00;
@@ -155,7 +155,7 @@ begin
             load_pc <= 1'b0;
             load_linkreg <= 1'b0;
                     
-            instant <= 'b1;
+            
                     
             PC_source <= 1'b0;
             arg_source <= 2'b01;
@@ -171,7 +171,7 @@ begin
             load_pc <= 1'b1;
             load_linkreg <= iscall;
                     
-            instant <= 'b1;
+           
                     
             PC_source <= 1'b0;
             arg_source <= 2'b01;
@@ -186,7 +186,7 @@ begin
             load_pc <= 1'b1;
             load_linkreg <= 1'b0;
                     
-            instant <= 'b1;
+            
                     
             PC_source <= 1'b1;
             arg_source <= 2'b01;
@@ -201,7 +201,7 @@ begin
             load_pc <= 1'b0;
             load_linkreg <= 1'b0;
                     
-            instant <= INS[15:0];
+            
                     
             PC_source <= 1'b1;
             arg_source <= operation[1:0];
@@ -219,7 +219,6 @@ begin
             load_pc <= 1'b0;
             load_linkreg <= 1'b0;
                     
-            instant <= 'b1;
                     
             PC_source <= 1'b1;
             arg_source <= 2'b01;
@@ -234,7 +233,7 @@ begin
 			load_pc <= 1'b0;
 			load_linkreg <= 1'b0;
 				
-			instant <= 'b1;
+			
 				
 			PC_source <= 1'b0;
 			arg_source <= 'b0;
@@ -246,6 +245,7 @@ end
     
 assign opcode = INS[20:18];
 assign new_pc = INS[15:0];
+assign instant = INS[15:0];
 assign new_linkreg = INS_addr + 1; 
 assign REGS_addr = INS[4:0];
 assign mem_addr = INS[9:0];
