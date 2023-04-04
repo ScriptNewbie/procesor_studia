@@ -131,7 +131,7 @@ instruction_decoder instruction_decoder(
         .PC_source(PC_in_source),
         .arg_source(arg_source),
         .flags_ce(flagreg_ce),
-        .flags(flag_out),
+        .flags(flag_in),
         .mem_we(mem_we),
         .mem_addr(mem_addr),
         .block_cy_ov(block_cy_ov)
