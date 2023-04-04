@@ -24,7 +24,7 @@ initial
 initial
     begin
 
-    #100 $stop; 
+    #500 $stop; 
 end
 
 initial
