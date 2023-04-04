@@ -27,7 +27,7 @@ module procesor (
 wire [15:0] PC_in;
 wire PC_load;
 wire [15:0] INS_addr;
-wire [25:0] INS;
+wire [20:0] INS;
 wire PC_in_source;
 wire [15:0] PC_jump_addr;
 
@@ -148,12 +148,12 @@ data_memory memory(
 assign PC_in = PC_in_source ? linkreg_out : PC_jump_addr;
 
 //More sources to be added so case no assign
-always @(arg_source)
+always @(*)
     case (arg_source)
-        2'b00: arg2 = REGS_output;
-        2'b01: arg2 = instant_value;
-        2'b10: arg2 = mem_out;
-        default: arg2 = 'bx;
+        2'b00: arg2 <= REGS_output;
+        2'b01: arg2 <= instant_value;
+        2'b10: arg2 <= mem_out;
+        default: arg2 <= 'bx;
     endcase
     
     

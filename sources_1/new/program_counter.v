@@ -8,7 +8,7 @@ module program_counter(
         input load,
         input CE,
         input clk,
-        output reg [15:0] OUT
+        output reg [15:0] OUT = 0
     );
 
 always @(posedge(clk))
