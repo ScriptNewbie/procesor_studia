@@ -50,7 +50,7 @@ always @(*)
             CY = 1'b0;
         end
         3'b110: begin
-            res = arg2; //Przepisanie operandu 1
+            res = arg1; //Przepisanie operandu 1
             CY = 1'bx;
         end
         3'b111: begin
