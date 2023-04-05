@@ -97,6 +97,15 @@ begin
             else  output_type <= 3'b111;
         end
         
+        5'b10010: begin 
+            if(S) output_type <= 3'b010;
+            else  output_type <= 3'b111;
+        end
+        5'b10110: begin 
+            if(S) output_type <= 3'b010;
+            else  output_type <= 3'b111;
+        end
+        
         5'b10001: begin
             output_type <= 3'b011;
         end
