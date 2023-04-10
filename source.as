@@ -12,3 +12,4 @@ loop2:	and r1
 		mov a, 5
 		mov a, @3
 		ret
+		jmp loop2

@@ -1,3 +1,5 @@
+//Uwaga, jeżeli w linii będzie sam komentarz, błędnie będzie numerować linie przy errorze ;)
+
 const fs = require('fs');
 
 const generatePayload = (value) => {
@@ -14,6 +16,27 @@ const getLabelAddress = (name, labels) => {
     }
     return -1;
   };
+
+const generateJumpPayload = (firstOperand, secondOperand, index, labels) => {
+    let ok = true;
+    let address = 0;
+    if(typeof firstOperand !== 'undefined' && typeof secondOperand === 'undefined') {
+        if(isNaN(firstOperand))
+        {
+            address = getLabelAddress(firstOperand, labels)
+            if(address < 0) {
+                console.log((index + 1) + ": Syntax error: such label does not exist")
+                ok = false;
+            }
+        } else {
+            address = parseInt(firstOperand)
+        }
+    } else {
+        console.log((index + 1) + ": Syntax error: Wrong operands")
+        ok = false
+    }
+    return {isOk: ok, payload: generatePayload(address)}
+}
 
 try {
   let ok = true;
@@ -37,7 +60,7 @@ try {
             expression[0] = expression[0].slice(0, -1)
             labels.push({name: expression[0], line: index})
         } else {
-            console.log(index + ": Syntax error: Label cannot start with number")
+            console.log((index + 1) + ": Syntax error: Label cannot start with number")
             ok = false;
         }
         expression.shift();
@@ -60,7 +83,7 @@ try {
                 {
                     machineCode.push("11110" + generatePayload(parseInt(secondOperand.substr(1))))
                 } else {
-                    console.log(index+ ": Syntax error: Wrong second operand!");
+                    console.log((index + 1)+ ": Syntax error: Wrong second operand!");
                     ok = false;
                 }
             } else if(secondOperand === "a") {
@@ -71,15 +94,15 @@ try {
                 {
                     machineCode.push("11010" + generatePayload(parseInt(firstOperand.substr(1))))
                 } else {
-                    console.log(index+ ": Syntax error: Wrong second operand!");
+                    console.log((index + 1)+ ": Syntax error: Wrong second operand!");
                     ok = false;
                 }
 
             } else {
-                console.log(index+ ": Syntax error: One operand must be acumulator")
+                console.log((index + 1)+ ": Syntax error: One operand must be acumulator")
             }
         } else {
-            console.log(index+ ": Syntax error: Add requires two operands");
+            console.log((index + 1)+ ": Syntax error: Add requires two operands");
             ok = false;
         }
     } else if(operation === "add" || operation === "sub") {
@@ -88,11 +111,11 @@ try {
             if(firstOperand.startsWith("r") && !isNaN(address)) {
                 machineCode.push((operation === "add" ? "00000" : "00100") + generatePayload(address))
             } else {
-                console.log(index+ ": Syntax error: Add requires register as argument");
+                console.log((index + 1)+ ": Syntax error: Add requires register as argument");
                 ok = false;
             }
         } else {
-            console.log(index+ ": Syntax error: Add requires operand");
+            console.log((index + 1)+ ": Syntax error: Add requires operand");
             ok = false;
         }
     } else if(operation === "inc" || operation == "dec"){
@@ -103,11 +126,11 @@ try {
             if(!isNaN(value)){
                 machineCode.push((operation === "inc" ? "00001" : "00101") + generatePayload(value))
             } else {
-                console.log(index+ ": Syntax error: Operand is wrong!")
+                console.log((index + 1)+ ": Syntax error: Operand is wrong!")
                 ok = false;
             } 
         } else {
-            console.log(index+ ": Syntax error: Wrong operands!")
+            console.log((index + 1)+ ": Syntax error: Wrong operands!")
             ok = false;
         }
     } else if(operation === "and"){
@@ -116,11 +139,11 @@ try {
             if(firstOperand.startsWith("r") && !isNaN(address)) {
                 machineCode.push( "01000" + generatePayload(address))
             } else {
-                console.log(index+ ": Syntax error: AND requires register as argument");
+                console.log((index + 1)+ ": Syntax error: AND requires register as argument");
                 ok = false;
             }
         } else {
-            console.log(index+ ": Syntax error: AND requires operand");
+            console.log((index + 1)+ ": Syntax error: AND requires operand");
             ok = false;
         }
     } else if(operation === "or"){
@@ -129,11 +152,11 @@ try {
             if(firstOperand.startsWith("r") && !isNaN(address)) {
                 machineCode.push( "01100" + generatePayload(address))
             } else {
-                console.log(index+ ": Syntax error: OR requires register as argument");
+                console.log((index + 1)+ ": Syntax error: OR requires register as argument");
                 ok = false;
             }
         } else {
-            console.log(index+ ": Syntax error: OR requires operand");
+            console.log((index + 1)+ ": Syntax error: OR requires operand");
             ok = false;
         }
     } else if(operation === "xor"){
@@ -142,21 +165,53 @@ try {
             if(firstOperand.startsWith("r") && !isNaN(address)) {
                 machineCode.push( "10000" + generatePayload(address))
             } else {
-                console.log(index+ ": Syntax error: XOR requires register as argument");
+                console.log((index + 1)+ ": Syntax error: XOR requires register as argument");
                 ok = false;
             }
         } else {
-            console.log(index+ ": Syntax error: XOR requires operand");
+            console.log((index + 1)+ ": Syntax error: XOR requires operand");
             ok = false;
         }
     } else if(operation === "not") {
         machineCode.push("100010000000000000000")
+    } else if(operation === "jmp") {
+        const {isOk, payload} = generateJumpPayload(firstOperand, secondOperand, index, labels)
+        ok = isOk
+        machineCode.push("01001" + payload)
+    } else if(operation === "jmpz") {
+        const {isOk, payload} = generateJumpPayload(firstOperand, secondOperand, index, labels)
+        ok = isOk
+        machineCode.push("01010" + payload)
+    } else if(operation === "jmpo") {
+        const {isOk, payload} = generateJumpPayload(firstOperand, secondOperand, index, labels)
+        ok = isOk
+        machineCode.push("01011" + payload)
+    } else if(operation === "jmps") {
+        const {isOk, payload} = generateJumpPayload(firstOperand, secondOperand, index, labels)
+        ok = isOk
+        machineCode.push("10010" + payload)
+    } else if(operation === "call") {
+        const {isOk, payload} = generateJumpPayload(firstOperand, secondOperand, index, labels)
+        ok = isOk
+        machineCode.push("01101" + payload)
+    } else if(operation === "callz") {
+        const {isOk, payload} = generateJumpPayload(firstOperand, secondOperand, index, labels)
+        ok = isOk
+        machineCode.push("01110" + payload)
+    } else if(operation === "callo") {
+        const {isOk, payload} = generateJumpPayload(firstOperand, secondOperand, index, labels)
+        ok = isOk
+        machineCode.push("01111" + payload)
+    } else if(operation === "calls") {
+        const {isOk, payload} = generateJumpPayload(firstOperand, secondOperand, index, labels)
+        ok = isOk
+        machineCode.push("10110" + payload)
     } else if(operation === "ret") {
         machineCode.push("100010000000000000000")
     } else if(operation ==="nop"){
         machineCode.push("110110000000000000000")
     } else {
-        console.log(index+ ": Syntax error: No such mnemonic")
+        console.log((index + 1)+ ": Syntax error: No such mnemonic")
         ok = false;
     }
   })
@@ -165,7 +220,6 @@ try {
     console.log(expressions)
     console.log(labels)
     console.log(machineCode)
-    
   }
   
 
