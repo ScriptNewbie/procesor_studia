@@ -173,7 +173,7 @@ try {
             ok = false;
         }
     } else if(operation === "not") {
-        machineCode.push("100010000000000000000")
+        machineCode.push("101000000000000000000")
     } else if(operation === "jmp") {
         const {isOk, payload} = generateJumpPayload(firstOperand, secondOperand, index, labels)
         ok = isOk
@@ -216,12 +216,30 @@ try {
     }
   })
 
-  if(ok){
-    console.log(expressions)
-    console.log(labels)
-    console.log(machineCode)
+  const addressLength = Math.ceil(Math.log2(machineCode.length))
+  const generateAddress = (address) => {
+    const binaryAddress = address.toString(2);
+    return String("0").repeat(addressLength - binaryAddress.length) + binaryAddress
+  }
+
+
+  if(ok)
+  {
+    machineCode.forEach((line, index) => {
+        const payload = `${addressLength}'b${generateAddress(index)}: data <= 21'b${line};\n`
+        try {
+            fs.writeFileSync("output.txt", payload, { flag: 'a' });
+          } catch (err) {
+            console.error(err);
+          }
+    })
   }
   
+  try {
+    fs.writeFileSync("output.txt", "\n---------------------END--------------------\n", { flag: 'a' });
+  } catch (err) {
+    console.error(err);
+  }
 
 } catch (err) {
   console.error(err);
