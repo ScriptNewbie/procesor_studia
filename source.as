@@ -1,18 +1,6 @@
-mov a, 5
-mov a, 3
-nop
-nop
-mov a, 5
-mov a, 3
-mov a, 5
-mov a, 3
-mov a, 5
-mov a, 3
-mov a, 5
-mov a, 3
-mov a, 5
-mov a, 3
-mov a, 5
-mov a, 3
+mov a, 1
+mov r0, a
+mov a, 0
+sub r0
+sub r0
 stop: jmp stop
-

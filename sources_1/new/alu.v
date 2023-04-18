@@ -28,10 +28,10 @@ always @(*)
     begin
         case(opcode) //SprawdŸ jak¹ operacjê wykonaæ
         3'b000: begin
-            {CY, res} = arg1 + arg2 + (block_cy_ov & CY_in); //Dodawanie + wypracowanie flagi cary
+            {CY, res} = arg1 + arg2 + (~block_cy_ov & CY_in); //Dodawanie + wypracowanie flagi cary
         end
         3'b001: begin
-            {CY, res} = arg1 - arg2 - (block_cy_ov & CY_in); //Odejmowanie + wypracowanie flagi cary
+            {CY, res} = arg1 - arg2 - (~block_cy_ov & CY_in); //Odejmowanie + wypracowanie flagi cary
         end
         3'b010: begin
             res = arg1 & arg2; //AND

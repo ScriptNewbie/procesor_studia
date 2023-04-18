@@ -13,7 +13,7 @@ module ROM #(parameter ROM_WIDTH = 21)(
    
 //Zmiana na wejœciu ADDR powoduje zmienê danej na magistrali wyjœciowej
 
-//zawartoœæ akumulatora jest traktowana jako liczba ze znakiem, pojawiaj¹ siê w nim kolejne liczby ci¹gu fibonaciego, a¿ do wyst¹pienia overflowu wtedy program staje.  
+//Test wywo³ania i powrotu z funkcji - program 3 krotnie wywo³uje funkcje mnozenia dla wartosci z rejestrów r1 i r2, wynik jest zapisywany w rejestrze r0 
 always @(*)
    case (ADDR)
       6'b000000: data <= 21'b111010000000000000101; //a = 5
@@ -35,9 +35,9 @@ always @(*)
       6'b001110: data <= 21'b011010000000000010011;//call mnozenie
       
       6'b001111: data <= 21'b010010000000000001111;//stop
-      6'b010000: data <= 21'b010010000000000001111;//stop
-      6'b010001: data <= 21'b010010000000000001111;//stop
-      6'b010010: data <= 21'b010010000000000001111;//stop
+      6'b010000: data <= 21'b010010000000000001111;//wolne miejsce na instrukcje
+      6'b010001: data <= 21'b010010000000000001111;//wolne miejsce na instrukcje
+      6'b010010: data <= 21'b010010000000000001111;//wolne miejsce na instrukcje
       
       6'b010011: data <= 21'b111010000000000000000;//a = 0 //mnozenie
       6'b010100: data <= 21'b110010000000000000011;//r3 = a
