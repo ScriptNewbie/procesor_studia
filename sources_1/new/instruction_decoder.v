@@ -41,7 +41,8 @@ wire Z, CY, S, P, OV;
 assign operation = 	INS[20:16];
 assign iscall = operation[2];
 assign {Z, CY, S, P, OV} = flags;
-	
+
+//Wypracowanie kodu wyjœcia	
 always @(*)
 begin
     case (operation)
@@ -136,6 +137,7 @@ begin
     endcase
 end
 
+//Wypracowanie wyjœæ
 always @(*)
 begin
 //Operacje arytmetyczno logiczne
